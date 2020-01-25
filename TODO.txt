@@ -7,4 +7,7 @@ create all the required files and directories
 --DONE--put them in the present working directory.
 
 2.create a static html page for Abeliophyllum flower
---DONE--download the flower image and jar gif.
+--DONE--put a link which can redirect to home page.
+
+3.create a static html page for Ageratum flower
+--DONE--put a link which can redirect to home page.
