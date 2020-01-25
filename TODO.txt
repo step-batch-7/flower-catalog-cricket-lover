@@ -11,3 +11,5 @@ create all the required files and directories
 
 3.create a static html page for Ageratum flower
 --DONE--put a link which can redirect to home page.
+
+--DONE--separate the pages into individual files
