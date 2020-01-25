@@ -13,3 +13,5 @@ create all the required files and directories
 --DONE--put a link which can redirect to home page.
 
 --DONE--separate the pages into individual files
+
+download the respected pdf when clicked on 'Download as book' link.
