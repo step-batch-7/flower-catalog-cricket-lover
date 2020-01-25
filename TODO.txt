@@ -1,6 +1,6 @@
 create all the required files and directories
-  index.html
-	styles.css
+  --DONE--index.html
+	--DONE--styles.css
 	
 create a static html home page with the required layout
 	->download the flower image and jar gif.
