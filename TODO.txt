@@ -2,6 +2,9 @@ create all the required files and directories
   --DONE--index.html
 	--DONE--styles.css
 	
-create a static html home page with the required layout
-	->download the flower image and jar gif.
-	->put them in the present working directory.
+1.create a static html home page with the required layout
+--DONE--download the flower image and jar gif.
+--DONE--put them in the present working directory.
+
+2.create a static html page for Abeliophyllum flower
+--DONE--download the flower image and jar gif.
