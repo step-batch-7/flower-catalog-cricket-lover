@@ -47,7 +47,6 @@ const createPage = function(filename) {
 const generateResponse = function(text) {
   const [request, ...headerAndContent] = text.split('\n');
   let filename = request.match('.*/(.*.*) ')[1];
-  console.log(filename);
   if (filename === '') filename = 'index.html';
   const [, extension] = filename.split('.');
   if (extension === 'jpg' || extension === 'gif')
