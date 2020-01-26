@@ -13,7 +13,10 @@ create all the required files and directories
 --DONE--put a link which can redirect to home page.
 
 --DONE--separate the pages into individual files
-
 --DONE--create a server
+
+4.create a page for guest book
+	put a link which can redirect to home page.
+	
 
 download the respected pdf when clicked on 'Download as book' link.
