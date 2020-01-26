@@ -14,4 +14,6 @@ create all the required files and directories
 
 --DONE--separate the pages into individual files
 
+--DONE--create a server
+
 download the respected pdf when clicked on 'Download as book' link.
