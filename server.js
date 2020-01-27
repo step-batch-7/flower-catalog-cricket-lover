@@ -8,7 +8,8 @@ const CONTENT_TYPES = {
   js: 'application/javascript',
   json: 'application/json',
   gif: 'image/gif',
-  jpg: 'application/jpg'
+  jpg: 'application/jpg',
+  pdf: 'application/pdf'
 };
 
 const createNotFoundPage = function() {
@@ -51,6 +52,9 @@ const generateResponse = function(text) {
   const [, extension] = filename.split('.');
   if (extension === 'jpg' || extension === 'gif')
     filename = `images/${filename}`;
+  if (extension === 'pdf') {
+    filename = `PDFs/${filename}`;
+  }
   if (!fs.existsSync(filename)) {
     return [createNotFoundPage()];
   }
