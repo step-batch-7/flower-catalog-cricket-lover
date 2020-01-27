@@ -31,7 +31,7 @@ const createNotFoundPage = function() {
 
 const createPage = function(filename) {
   const fileContent = fs.readFileSync(filename);
-  const [, extension] = filename.split('.');
+  const [, , extension] = filename.split('.');
 
   const response = [
     'HTTP/1.1 200 OK',
@@ -47,18 +47,18 @@ const createPage = function(filename) {
 
 const generateResponse = function(text) {
   const [request, ...headerAndContent] = text.split('\n');
-  let filename = request.match('.*/(.*.*) ')[1];
-  if (filename === '') filename = 'index.html';
-  const [, extension] = filename.split('.');
-  if (extension === 'jpg' || extension === 'gif')
-    filename = `images/${filename}`;
-  if (extension === 'pdf') {
-    filename = `PDFs/${filename}`;
-  }
-  if (!fs.existsSync(filename)) {
+  let filename = request.split(' ')[1];
+  if (filename === '/') filename = '/index.html';
+  // const [, extension] = filename.split('.');
+  // if (extension === 'jpg' || extension === 'gif')
+  //   filename = `public/images/${filename}`;
+  // if (extension === 'pdf') {
+  //   filename = `public/PDFs/${filename}`;
+  // }
+  if (!fs.existsSync(`./public${filename}`)) {
     return [createNotFoundPage()];
   }
-  return createPage(filename);
+  return createPage(`./public${filename}`);
 };
 
 const handleRequest = function(socket) {
