@@ -16,7 +16,9 @@ create all the required files and directories
 --DONE--create a server
 
 4.create a page for guest book
-	put a link which can redirect to home page.
+--DONE--put a link which can redirect to home page.
+
+--DONE--hide the jar on click for one second
 	
 
 download the respected pdf when clicked on 'Download as book' link.
