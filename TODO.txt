@@ -21,3 +21,5 @@ create all the required files and directories
 --DONE--hide the jar on click for one second
 	
 --DONE--download the respected pdf when clicked on 'Download as book' link.
+
+take and display the commits in reverse chronological order

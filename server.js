@@ -49,12 +49,6 @@ const generateResponse = function(text) {
   const [request, ...headerAndContent] = text.split('\n');
   let filename = request.split(' ')[1];
   if (filename === '/') filename = '/index.html';
-  // const [, extension] = filename.split('.');
-  // if (extension === 'jpg' || extension === 'gif')
-  //   filename = `public/images/${filename}`;
-  // if (extension === 'pdf') {
-  //   filename = `public/PDFs/${filename}`;
-  // }
   if (!fs.existsSync(`./public${filename}`)) {
     return [createNotFoundPage()];
   }
