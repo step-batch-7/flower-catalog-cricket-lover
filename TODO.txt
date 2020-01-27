@@ -20,5 +20,4 @@ create all the required files and directories
 
 --DONE--hide the jar on click for one second
 	
-
-download the respected pdf when clicked on 'Download as book' link.
+--DONE--download the respected pdf when clicked on 'Download as book' link.
