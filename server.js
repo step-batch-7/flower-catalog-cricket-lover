@@ -12,7 +12,7 @@ const CONTENT_TYPES = {
   pdf: 'application/pdf'
 };
 
-const createNotFoundPage = function() {
+const serveBadRequestPage = function() {
   const notFoundPage = `
 <html>
   <body>
@@ -29,28 +29,76 @@ const createNotFoundPage = function() {
   return defaultResponse.join('\n');
 };
 
+const getExistingComments = function() {
+  if (fs.existsSync('./data/comments.json'))
+    return JSON.parse(fs.readFileSync('./data/comments.json', 'utf8'));
+  return [];
+};
+
 const createPage = function(filename) {
-  const fileContent = fs.readFileSync(filename);
+  const existingComments = getExistingComments();
+  let fileContent = fs.readFileSync(filename);
   const [, , extension] = filename.split('.');
+
+  const updateGuestBook = function(existingComments, newComment) {
+    const { name, comment, date } = newComment;
+    const latestComment = `${date.toString()} ${name} ${comment} </br> ${existingComments}`;
+    return latestComment;
+  };
+  const name = existingComments.reduce(updateGuestBook, '');
+
+  let updatedFileContent = fileContent;
+  if (extension === 'html') {
+    fileContent = fileContent.toString();
+    updatedFileContent = fileContent.replace('__comments__', name);
+  }
 
   const response = [
     'HTTP/1.1 200 OK',
     `Content-type: ${CONTENT_TYPES[extension]}`,
-    `Content-length: ${fileContent.length}`,
+    `Content-length: ${updatedFileContent.length}`,
     'Connection:closed',
     '',
     ''
   ];
 
-  return [response.join('\n'), fileContent];
+  return [response.join('\n'), updatedFileContent];
+};
+
+const showUserPage = function() {
+  const defaultResponse = [
+    'HTTP/1.1 301',
+    `Content-length: 0`,
+    'Location: http://localhost:9000/guestBook.html',
+    '',
+    ''
+  ];
+
+  return [defaultResponse.join('\n')];
 };
 
 const generateResponse = function(text) {
+  const comments = getExistingComments();
   const [request, ...headerAndContent] = text.split('\n');
-  let filename = request.split(' ')[1];
+  let [method, filename] = request.split(' ');
   if (filename === '/') filename = '/index.html';
+
+  if (method === 'POST' && filename === '/showUserPage') {
+    const userDetails = headerAndContent[headerAndContent.length - 1];
+    const keyValuePairs = userDetails.split('&');
+    const pairs = keyValuePairs.reduce((context, pair) => {
+      const [key, value] = pair.split('=');
+      context[key] = value;
+      return context;
+    }, {});
+    pairs['date'] = new Date();
+    comments.push(pairs);
+    fs.writeFileSync('data/comments.json', JSON.stringify(comments), 'utf8');
+    return showUserPage();
+  }
+
   if (!fs.existsSync(`./public${filename}`)) {
-    return [createNotFoundPage()];
+    return [serveBadRequestPage()];
   }
   return createPage(`./public${filename}`);
 };
