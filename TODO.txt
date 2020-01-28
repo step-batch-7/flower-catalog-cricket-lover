@@ -22,4 +22,4 @@ create all the required files and directories
 	
 --DONE--download the respected pdf when clicked on 'Download as book' link.
 
-take and display the commits in reverse chronological order
+--DONE--take and display the comments in reverse chronological order
