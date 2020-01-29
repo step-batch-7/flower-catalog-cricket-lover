@@ -1,5 +1,6 @@
 const fs = require('fs');
 const { Server } = require('http');
+const querystring = require('querystring')
 
 const CONTENT_TYPES = {
   txt: 'text/plain',
@@ -32,6 +33,12 @@ const getExistingComments = function() {
 
 const STATIC_FOLDER = `${__dirname}/public`;
 
+const updateGuestBook = function(existingComments, newComment) {
+	const { name, comment, date } = newComment;
+	const latestComment = `${date.toString()} ${name} ${comment} </br> ${existingComments}`;
+	return latestComment;
+};
+
 const createPage = function(req, res) {
   const existingComments = getExistingComments();
   let filename = `${req.url}`;
@@ -39,11 +46,6 @@ const createPage = function(req, res) {
   let fileContent = fs.readFileSync(`${STATIC_FOLDER}${filename}`);
   const [, extension] = filename.split('.');
 
-  const updateGuestBook = function(existingComments, newComment) {
-    const { name, comment, date } = newComment;
-    const latestComment = `${date.toString()} ${name} ${comment} </br> ${existingComments}`;
-    return latestComment;
-  };
   const name = existingComments.reduce(updateGuestBook, '');
 
   let updatedFileContent = fileContent;
@@ -56,18 +58,26 @@ const createPage = function(req, res) {
   res.end(updatedFileContent);
 };
 
+const SYMBOLS = {
+	'+':' ',
+	'%21': '!',
+	'%0D%0A': '\n'
+}
+
+const replaceUnknownCharacters = function(text, character) {
+	const replacedText = text.replace(`/${character}/g`, SYMBOLS[character])
+	return replacedText
+}
+
 const showUserPage = function(req, res) {
   const existingComments = getExistingComments();
   let userDetails = '';
   req.on('data', chunk => (userDetails += chunk));
   req.on('end', () => {
-    const keyValuePairs = userDetails.split('&');
-    const pairs = keyValuePairs.reduce((context, pair) => {
-      const [key, value] = pair.split('=');
-      context[key] = value;
-      return context;
-    }, {});
-    pairs['date'] = new Date();
+		pairs = querystring.parse(userDetails)
+		pairs['date'] = new Date();
+		console.log(pairs);
+		
     existingComments.push(pairs);
     fs.writeFileSync(
       'data/comments.json',
