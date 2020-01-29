@@ -35,7 +35,8 @@ const STATIC_FOLDER = `${__dirname}/public`;
 
 const updateGuestBook = function(existingComments, newComment) {
 	const { name, comment, date } = newComment;
-	const latestComment = `${date.toString()} ${name} ${comment} </br> ${existingComments}`;
+	const [newDate, time] = date.split('T')
+	const latestComment = `<tr><td>${newDate}</td><td>${time.slice(0,8)}</td><td>${name}</td> <td>${comment}</td> </br> ${existingComments}</tr>`;
 	return latestComment;
 };
 
