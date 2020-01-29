@@ -58,17 +58,6 @@ const createPage = function(req, res) {
   res.end(updatedFileContent);
 };
 
-const SYMBOLS = {
-	'+':' ',
-	'%21': '!',
-	'%0D%0A': '\n'
-}
-
-const replaceUnknownCharacters = function(text, character) {
-	const replacedText = text.replace(`/${character}/g`, SYMBOLS[character])
-	return replacedText
-}
-
 const showUserPage = function(req, res) {
   const existingComments = getExistingComments();
   let userDetails = '';
@@ -76,8 +65,6 @@ const showUserPage = function(req, res) {
   req.on('end', () => {
 		pairs = querystring.parse(userDetails)
 		pairs['date'] = new Date();
-		console.log(pairs);
-		
     existingComments.push(pairs);
     fs.writeFileSync(
       'data/comments.json',
