@@ -1,5 +1,5 @@
 const {Server} = require('http');
-const {handleRequest} = require('./app')
+const {handleRequest} = require('./handler')
 
 const main = function() {
   const server = new Server(handleRequest);

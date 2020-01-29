@@ -80,16 +80,27 @@ const showUserPage = function(req, res) {
   res.end();
 };
 
+const postHandlers = {
+	'/showUserPage': showUserPage,
+	'defaultHandler': serveBadRequestPage 
+}
+
+const getHandlers = {
+	true: createPage,
+	'defaultHandler':serveBadRequestPage
+}
+
+const methods = {
+	GET: getHandlers,
+	POST: postHandlers
+}
+
 const handleRequest = function(req, res) {
   const filename = req.url;
   const method = req.method;
-  if (method === 'POST' && filename === '/showUserPage') {
-    return showUserPage(req, res);
-  }
-  if (fs.existsSync(`./public${filename}`)) {
-    return createPage(req, res);
-  }
-  return serveBadRequestPage(req, res);
+	const handlers = methods[method];
+	const handler = handlers[filename] || handlers[(fs.existsSync(`./public${filename}`))] || handlers['defaultHandler']
+	handler(req, res)
 };
 
 module.exports = {handleRequest};
