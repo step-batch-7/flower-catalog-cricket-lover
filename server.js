@@ -1,5 +1,5 @@
 const {Server} = require('http');
-const {app} = require('./handler')
+const {app} = require('./handler');
 
 const main = function() {
   const server = new Server(app.serve.bind(app));

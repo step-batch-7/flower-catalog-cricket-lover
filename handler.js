@@ -35,44 +35,50 @@ const getExistingComments = function() {
 
 const STATIC_FOLDER = `${__dirname}/public`;
 
-const updateGuestBook = function(existingComments, newComment) {
-  const { name, comment, date } = newComment;
+const createRow = function(updatedComments, currentComment) {
+  const { name, comment, date } = currentComment;
   const [newDate, time] = date.split('T');
-  const latestComment = `<tr><td>${newDate}</td><td>${time.slice(
-    0,
-    8
-  )}</td><td>${name}</td> <td>${comment}</td> </br> ${existingComments}</tr>`;
-  return latestComment;
+  const row = `
+	<tr>
+	<td>${newDate}</td>
+	<td>${time}</td>
+	<td>${name}</td>
+	<td>${comment}</td>
+</tr>`;
+  return row + updatedComments;
+};
+
+const loadTemplate = (content, propertyBag) => {
+  const replaceKeyWithValue = (content, key) => {
+    const pattern = new RegExp(`__${key}__`, 'g');
+    return content.replace(pattern, propertyBag[key]);
+  };
+  const keys = Object.keys(propertyBag);
+  const html = keys.reduce(replaceKeyWithValue, content);
+  return html;
 };
 
 const serveStaticPage = function(req, res, next) {
-  const existingComments = getExistingComments();
-  let filename = `${req.url}`;
-  if (filename === '/') {
-    filename = '/index.html';
-  }
+  const updatedComments = getExistingComments().reduce(createRow, '');
+  const filename = req.url === '/' ? '/index.html' : req.url;
   if (!fs.existsSync(`./public${filename}`)) {
     next();
   }
   let fileContent = fs.readFileSync(`${STATIC_FOLDER}${filename}`);
   const [, extension] = filename.split('.');
-
-  const name = existingComments.reduce(updateGuestBook, '');
-
-  let updatedFileContent = fileContent;
   if (extension === 'html') {
-    fileContent = fileContent.toString();
-    updatedFileContent = fileContent.replace('__comments__', name);
+    fileContent = loadTemplate(fileContent.toString(), {
+      comments: updatedComments
+    });
   }
-  const contentType = CONTENT_TYPES[extension];
-  res.setHeader('Content-Type', contentType);
-  res.end(updatedFileContent);
+  res.setHeader('Content-Type', CONTENT_TYPES[extension]);
+  res.end(fileContent);
 };
 
-const showUserPage = function(req, res, next) {
+const showUserPage = function(req, res) {
   const existingComments = getExistingComments();
 
-  pairs = querystring.parse(req.body);
+  const pairs = querystring.parse(req.body);
   pairs['date'] = new Date();
   existingComments.push(pairs);
   fs.writeFileSync('data/comments.json', JSON.stringify(existingComments));
@@ -83,7 +89,10 @@ const showUserPage = function(req, res, next) {
 
 const readBody = function(req, res, next) {
   let userDetails = '';
-  req.on('data', chunk => (userDetails += chunk));
+  req.on('data', chunk => {
+    userDetails += chunk;
+    return userDetails;
+  });
   req.on('end', () => {
     req.body = userDetails;
     next();
