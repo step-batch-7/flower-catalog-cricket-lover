@@ -35,8 +35,8 @@ const getExistingComments = function() {
 
 const STATIC_FOLDER = `${__dirname}/public`;
 
-const createRow = function(updatedComments, currentComment) {
-  const { name, comment, date } = currentComment;
+const updateComments = function(existingComments, newComment) {
+  const { name, comment, date } = newComment;
   const [newDate, time] = date.split('T');
   const row = `
 	<tr>
@@ -45,7 +45,7 @@ const createRow = function(updatedComments, currentComment) {
 	<td>${name}</td>
 	<td>${comment}</td>
 </tr>`;
-  return row + updatedComments;
+  return row + existingComments;
 };
 
 const loadTemplate = (content, propertyBag) => {
@@ -59,7 +59,7 @@ const loadTemplate = (content, propertyBag) => {
 };
 
 const serveStaticPage = function(req, res, next) {
-  const updatedComments = getExistingComments().reduce(createRow, '');
+  const updatedComments = getExistingComments().reduce(updateComments, '');
   const filename = req.url === '/' ? '/index.html' : req.url;
   if (!fs.existsSync(`./public${filename}`)) {
     next();
@@ -99,11 +99,18 @@ const readBody = function(req, res, next) {
   });
 };
 
+const methodNotAllowed = function(req, res) {
+  res.statusCode = 400;
+  res.end();
+};
+
 const app = new App();
 
 app.use(readBody);
-app.get('/', serveStaticPage);
+app.get('', serveStaticPage);
 app.post('/showUserPage', showUserPage);
-app.use(serveBadRequestPage);
+app.get('', serveBadRequestPage);
+app.post(serveBadRequestPage);
+app.use(methodNotAllowed);
 
 module.exports = { app };
