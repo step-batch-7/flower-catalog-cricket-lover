@@ -3,22 +3,38 @@ h1 {
   font-family: sans-serif;
   color: coral;
 }
+
 p {
   margin-top: 75%;
   margin-left: 20px;
 }
+
 .content {
-  display: flex;
+	display: flex;
 }
+
+.links {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+}
+
 .page {
   padding: 5%;
 }
+
+#jar {
+	padding-left: 80px;
+}
+
 h4 {
   text-align: center;
 }
+
 table {
 	border: 1px solid black;
 }
+
 th,td {
 	width: 200px;
 	border-collapse: collapse;
