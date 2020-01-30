@@ -62,7 +62,8 @@ const serveStaticPage = function(req, res, next) {
   const updatedComments = getExistingComments().reduce(updateComments, '');
   const filename = req.url === '/' ? '/index.html' : req.url;
   if (!fs.existsSync(`./public${filename}`)) {
-    next();
+		next();
+		return;
   }
   let fileContent = fs.readFileSync(`${STATIC_FOLDER}${filename}`);
   const [, extension] = filename.split('.');
@@ -100,7 +101,7 @@ const readBody = function(req, res, next) {
 };
 
 const methodNotAllowed = function(req, res) {
-  res.statusCode = 400;
+  res.statusCode = 405;
   res.end();
 };
 
