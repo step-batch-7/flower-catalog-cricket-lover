@@ -48,7 +48,8 @@ const updateComments = function(existingComments, newComment) {
   return row + existingComments;
 };
 
-const loadTemplate = (content, propertyBag) => {
+const updateGuestBook = (fileContent, propertyBag) => {
+  const content = fileContent.toString();
   const replaceKeyWithValue = (content, key) => {
     const pattern = new RegExp(`__${key}__`, 'g');
     return content.replace(pattern, propertyBag[key]);
@@ -62,15 +63,12 @@ const serveStaticPage = function(req, res, next) {
   const updatedComments = getExistingComments().reduce(updateComments, '');
   const filename = req.url === '/' ? '/index.html' : req.url;
   if (!fs.existsSync(`./public${filename}`)) {
-		next();
-		return;
+    return next();
   }
   let fileContent = fs.readFileSync(`${STATIC_FOLDER}${filename}`);
   const [, extension] = filename.split('.');
   if (extension === 'html') {
-    fileContent = loadTemplate(fileContent.toString(), {
-      comments: updatedComments
-    });
+    fileContent = updateGuestBook(fileContent, { 'comments': updatedComments });
   }
   res.setHeader('Content-Type', CONTENT_TYPES[extension]);
   res.end(fileContent);
