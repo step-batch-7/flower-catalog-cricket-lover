@@ -1,5 +1,6 @@
 const fs = require('fs');
 const querystring = require('querystring');
+const { App } = require('./app');
 
 const CONTENT_TYPES = {
   txt: 'text/plain',
@@ -12,7 +13,7 @@ const CONTENT_TYPES = {
   pdf: 'application/pdf'
 };
 
-const serveBadRequestPage = function(req, res) {
+const serveBadRequestPage = function(req, res, next) {
   const badRequestPage = `
 <html>
   <body>
@@ -22,6 +23,7 @@ const serveBadRequestPage = function(req, res) {
   res.statusCode = 404;
   res.setHeader('Content-Type', 'text/html');
   res.end(badRequestPage);
+  next();
 };
 
 const getExistingComments = function() {
@@ -34,17 +36,23 @@ const getExistingComments = function() {
 const STATIC_FOLDER = `${__dirname}/public`;
 
 const updateGuestBook = function(existingComments, newComment) {
-  const {name, comment, date} = newComment;
+  const { name, comment, date } = newComment;
   const [newDate, time] = date.split('T');
-  const latestComment = `<tr><td>${newDate}</td><td>${time.slice(0, 8)}</td><td>${name}</td> <td>${comment}</td> </br> ${existingComments}</tr>`;
+  const latestComment = `<tr><td>${newDate}</td><td>${time.slice(
+    0,
+    8
+  )}</td><td>${name}</td> <td>${comment}</td> </br> ${existingComments}</tr>`;
   return latestComment;
 };
 
-const createPage = function(req, res) {
+const serveStaticPage = function(req, res, next) {
   const existingComments = getExistingComments();
   let filename = `${req.url}`;
   if (filename === '/') {
     filename = '/index.html';
+  }
+  if (!fs.existsSync(`./public${filename}`)) {
+    next();
   }
   let fileContent = fs.readFileSync(`${STATIC_FOLDER}${filename}`);
   const [, extension] = filename.split('.');
@@ -61,46 +69,32 @@ const createPage = function(req, res) {
   res.end(updatedFileContent);
 };
 
-const showUserPage = function(req, res) {
+const showUserPage = function(req, res, next) {
   const existingComments = getExistingComments();
-  let userDetails = '';
-  req.on('data', chunk => userDetails += chunk);
-  req.on('end', () => {
-    pairs = querystring.parse(userDetails);
-    pairs['date'] = new Date();
-    existingComments.push(pairs);
-    fs.writeFileSync(
-      'data/comments.json',
-      JSON.stringify(existingComments),
-      'utf8'
-    );
-  });
+
+  pairs = querystring.parse(req.body);
+  pairs['date'] = new Date();
+  existingComments.push(pairs);
+  fs.writeFileSync('data/comments.json', JSON.stringify(existingComments));
   res.statusCode = 301;
   res.setHeader('Location', 'http://localhost:9000/guestBook.html');
   res.end();
 };
 
-const postHandlers = {
-	'/showUserPage': showUserPage,
-	'defaultHandler': serveBadRequestPage 
-}
-
-const getHandlers = {
-	true: createPage,
-	'defaultHandler':serveBadRequestPage
-}
-
-const methods = {
-	GET: getHandlers,
-	POST: postHandlers
-}
-
-const handleRequest = function(req, res) {
-  const filename = req.url;
-  const method = req.method;
-	const handlers = methods[method];
-	const handler = handlers[filename] || handlers[(fs.existsSync(`./public${filename}`))] || handlers['defaultHandler']
-	handler(req, res)
+const readBody = function(req, res, next) {
+  let userDetails = '';
+  req.on('data', chunk => (userDetails += chunk));
+  req.on('end', () => {
+    req.body = userDetails;
+    next();
+  });
 };
 
-module.exports = {handleRequest};
+const app = new App();
+
+app.use(readBody);
+app.get('/', serveStaticPage);
+app.post('/showUserPage', showUserPage);
+app.use(serveBadRequestPage);
+
+module.exports = { app };
