@@ -31,5 +31,13 @@ describe('POST comments', function() {
       .post('/saveComments')
       .send('name=phani&comment=good')
       .expect(301, done);
-  })
+  });
+});
+
+describe('PUT request', function() {
+  it('should give method not allowed when wrong method is asked', function(done) {
+    request(app.serve.bind(app))
+      .put('/')
+      .expect(405, done);
+  });
 });
