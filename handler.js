@@ -13,17 +13,9 @@ const CONTENT_TYPES = {
   pdf: 'application/pdf'
 };
 
-const serveBadRequestPage = function(req, res, next) {
-  const badRequestPage = `
-<html>
-  <body>
-    <h2>404:File not found</h2>
-  </body>
-</html>`;
+const serveBadRequestPage = function(req, res) {
   res.statusCode = 404;
-  res.setHeader('Content-Type', 'text/html');
-  res.end(badRequestPage);
-  next();
+  res.end('Page not found');
 };
 
 const getExistingComments = function() {
@@ -74,7 +66,7 @@ const serveStaticPage = function(req, res, next) {
   res.end(fileContent);
 };
 
-const showUserPage = function(req, res) {
+const saveCommentsAndRedirect = function(req, res) {
   const existingComments = getExistingComments();
 
   const pairs = querystring.parse(req.body);
@@ -107,7 +99,7 @@ const app = new App();
 
 app.use(readBody);
 app.get('', serveStaticPage);
-app.post('/showUserPage', showUserPage);
+app.post('/showUserPage', saveCommentsAndRedirect);
 app.get('', serveBadRequestPage);
 app.post(serveBadRequestPage);
 app.use(methodNotAllowed);
