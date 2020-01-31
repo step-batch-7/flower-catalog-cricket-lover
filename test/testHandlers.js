@@ -8,6 +8,8 @@ describe('GET index.html', function() {
       .get('/')
       .expect('Content-Type', 'text/html', done)
       .expect('Content-Length', '692')
+      .expect(/Abeliophyllum/)
+      .expect(/Ageratum/)
       .expect(200);
   });
   it('should get the requested file when correct path is given', function(done) {
