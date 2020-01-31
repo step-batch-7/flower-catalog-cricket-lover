@@ -99,7 +99,7 @@ const app = new App();
 
 app.use(readBody);
 app.get('', serveStaticPage);
-app.post('/showUserPage', saveCommentsAndRedirect);
+app.post('/saveComments', saveCommentsAndRedirect);
 app.get('', serveBadRequestPage);
 app.post(serveBadRequestPage);
 app.use(methodNotAllowed);

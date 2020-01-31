@@ -2,7 +2,7 @@ const request = require('supertest');
 
 const { app } = require('../handler');
 
-describe('GET index.html', function() {
+describe('GET request', function() {
   it('should get index.html when the path is /', function(done) {
     request(app.serve.bind(app))
       .get('/')
@@ -23,4 +23,13 @@ describe('GET index.html', function() {
       .get('/badFile')
       .expect(404, done);
   });
+});
+
+describe('POST comments', function() {
+  it('should post comments on guestBookPage', function(done) {
+    request(app.serve.bind(app))
+      .post('/saveComments')
+      .send('name=phani&comment=good')
+      .expect(301, done);
+  })
 });
