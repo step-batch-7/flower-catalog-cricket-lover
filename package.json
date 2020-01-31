@@ -1,0 +1,27 @@
+{
+  "name": "flower-catalog-cricket-lover",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "supertest": "^4.0.2"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/step-batch-7/flower-catalog-cricket-lover.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/step-batch-7/flower-catalog-cricket-lover/issues"
+  },
+  "homepage": "https://github.com/step-batch-7/flower-catalog-cricket-lover#readme"
+}
