@@ -3,16 +3,7 @@ const querystring = require('querystring');
 const { App } = require('./app');
 const {COMMENTS_PATH} = require('./config');
 
-const CONTENT_TYPES = {
-  txt: 'text/plain',
-  html: 'text/html',
-  css: 'text/css',
-  js: 'application/javascript',
-  json: 'application/json',
-  gif: 'image/gif',
-  jpg: 'application/jpg',
-  pdf: 'application/pdf'
-};
+const CONTENT_TYPES = require('./public/lib/mimeTypes');
 
 const serveBadRequestPage = function(req, res) {
   res.statusCode = 404;
