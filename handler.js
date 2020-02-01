@@ -20,8 +20,6 @@ const serveBadRequestPage = function(req, res) {
 };
 
 const getExistingComments = function() {
-  console.log(COMMENTS_PATH);
-
   if (fs.existsSync(COMMENTS_PATH)) {
     return JSON.parse(fs.readFileSync(COMMENTS_PATH, 'utf8'));
   }
