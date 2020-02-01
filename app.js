@@ -12,9 +12,9 @@ class App {
     this.routes.push({ handler });
   }
   serve(req, res) {
-    const matchingHandlers = this.routes.filter(route =>
-      matchRoute(route, req)
-    );
+    const matchingHandlers = this.routes.filter(route => {
+      return matchRoute(route, req);
+    });
     const next = function() {
       if (matchingHandlers.length === 0) {
         return;

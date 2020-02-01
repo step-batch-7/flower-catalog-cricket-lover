@@ -1,6 +1,7 @@
 const fs = require('fs');
 const querystring = require('querystring');
 const { App } = require('./app');
+const {COMMENTS_PATH} = require('./config');
 
 const CONTENT_TYPES = {
   txt: 'text/plain',
@@ -19,8 +20,10 @@ const serveBadRequestPage = function(req, res) {
 };
 
 const getExistingComments = function() {
-  if (fs.existsSync('./data/comments.json')) {
-    return JSON.parse(fs.readFileSync('./data/comments.json', 'utf8'));
+  console.log(COMMENTS_PATH);
+
+  if (fs.existsSync(COMMENTS_PATH)) {
+    return JSON.parse(fs.readFileSync(COMMENTS_PATH, 'utf8'));
   }
   return [];
 };
@@ -60,7 +63,7 @@ const serveStaticPage = function(req, res, next) {
   let fileContent = fs.readFileSync(`${STATIC_FOLDER}${filename}`);
   const [, extension] = filename.split('.');
   if (extension === 'html') {
-    fileContent = updateGuestBook(fileContent, { 'comments': updatedComments });
+    fileContent = updateGuestBook(fileContent, { comments: updatedComments });
   }
   res.setHeader('Content-Type', CONTENT_TYPES[extension]);
   res.end(fileContent);
@@ -72,7 +75,7 @@ const saveCommentsAndRedirect = function(req, res) {
   const pairs = querystring.parse(req.body);
   pairs['date'] = new Date();
   existingComments.push(pairs);
-  fs.writeFileSync('data/comments.json', JSON.stringify(existingComments));
+  fs.writeFileSync(COMMENTS_PATH, JSON.stringify(existingComments));
   res.statusCode = 301;
   res.setHeader('Location', 'http://localhost:9000/guestBook.html');
   res.end();
@@ -101,7 +104,7 @@ app.use(readBody);
 app.get('', serveStaticPage);
 app.post('/saveComments', saveCommentsAndRedirect);
 app.get('', serveBadRequestPage);
-app.post(serveBadRequestPage);
+app.post('', serveBadRequestPage);
 app.use(methodNotAllowed);
 
 module.exports = { app };
