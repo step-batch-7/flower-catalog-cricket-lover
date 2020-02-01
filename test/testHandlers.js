@@ -1,5 +1,6 @@
+const sinon = require('sinon');
 const request = require('supertest');
-
+const fs = require('fs');
 const { app } = require('../handler');
 
 describe('GET request', function() {
@@ -26,10 +27,12 @@ describe('GET request', function() {
 });
 
 describe('POST comments', function() {
+  beforeEach(() => sinon.replace(fs, 'writeFileSync', () => {}));
+  afterEach(() => sinon.restore());
   it('should post comments on guestBookPage', function(done) {
     request(app.serve.bind(app))
       .post('/saveComments')
-      .send('name=phani&comment=good')
+      .send('name=honey&comment=ohMyGod!!')
       .expect(301, done);
   });
 });

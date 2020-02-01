@@ -8,11 +8,12 @@
   },
   "dependencies": {},
   "devDependencies": {
+    "sinon": "^8.1.1",
     "supertest": "^4.0.2"
   },
   "scripts": {
-    "test": "export DATA_STORE=test/resources/comments.json; nyc mocha", 
-   "start": "export DATA_STORE=data/comments.json; node server.js"
+    "test": "export DATA_STORE=test/resources/comments.json; nyc mocha",
+    "start": "export DATA_STORE=data/comments.json; node server.js"
   },
   "repository": {
     "type": "git",
