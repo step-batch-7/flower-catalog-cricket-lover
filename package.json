@@ -11,8 +11,8 @@
     "supertest": "^4.0.2"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
+    "test": "export DATA_STORE=test/resources/comments.json; nyc mocha", 
+   "start": "export DATA_STORE=data/comments.json; node server.js"
   },
   "repository": {
     "type": "git",
