@@ -66,7 +66,7 @@ const saveCommentsAndRedirect = function(req, res) {
   existingComments.push(pairs);
   fs.writeFileSync(COMMENTS_PATH, JSON.stringify(existingComments));
   res.statusCode = 301;
-  res.setHeader('Location', 'http://localhost:9000/guestBook.html');
+  res.setHeader('Location', 'guestBook.html');
   res.end();
 };
 
